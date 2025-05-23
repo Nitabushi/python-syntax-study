@@ -1,9 +1,10 @@
 file_path = 'input.txt'
+ALLOWD_MODES =('w','a')
 
 def write_to_file(content: str, mode: str = 'w'):
     """ファイルに書き込みまたは追記を行う"""
-    if mode not in ('w', 'a'):
-        raise ValueError("modeは 'w' または 'a' のいずれかである必要があります")
+    if mode not in ALLOWD_MODES:
+        raise ValueError(f"modeは{ALLOWD_MODES}のいずれかである必要があります。")
     with open(file_path, mode, encoding='utf-8')as file:
         file.write(content)
 
@@ -32,13 +33,13 @@ def add_file():
     read_file()
 
 # 実行＃
-#read_file()
-#write_file()
-#add_file()
-#init_file()
+read_file()
+write_file()
+add_file()
+init_file()
 
 # テストコード
-try:
-    write_to_file("テスト", mode='invalid')
-except ValueError as e:
-    print(e)  # modeは 'w' または 'a' のいずれかである必要があります。
+#try:
+#    write_to_file("テスト", mode='invalid')
+#except ValueError as e:
+#    print(e)  # modeは 'w' または 'a' のいずれかである必要があります。
