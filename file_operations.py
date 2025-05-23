@@ -2,6 +2,8 @@ file_path = 'input.txt'
 
 def write_to_file(content: str, mode: str = 'w'):
     """ファイルに書き込みまたは追記を行う"""
+    if mode not in ('w', 'a'):
+        raise ValueError("modeは 'w' または 'a' のいずれかである必要があります")
     with open(file_path, mode, encoding='utf-8')as file:
         file.write(content)
 
