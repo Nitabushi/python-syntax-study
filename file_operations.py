@@ -31,8 +31,14 @@ def add_file():
     print('---ファイルを追記---')
     read_file()
 
-# 実行
-read_file()
-write_file()
-add_file()
-init_file()
+# 実行＃
+#read_file()
+#write_file()
+#add_file()
+#init_file()
+
+# テストコード
+try:
+    write_to_file("テスト", mode='invalid')
+except ValueError as e:
+    print(e)  # modeは 'w' または 'a' のいずれかである必要があります。
