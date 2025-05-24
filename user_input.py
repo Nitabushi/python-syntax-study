@@ -1,4 +1,4 @@
-file_path = "data/output.png"
+file_path = "data/output.txt"
 ALLOWED_MODES =('w')
 
 # 使用するファイルのモード
@@ -24,4 +24,4 @@ with open(file_path, mode, encoding="utf-8")as file:
     file.write(user_input)
 
 print("入力内容を  output.txt  に保存しました。")
-print(f"ユーザから入力された内容は「{user_input}」です。")
+print(f"ユーザから入力された内容は「{user_input}」です。"),
