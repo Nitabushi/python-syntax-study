@@ -2,9 +2,14 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>Flask Sample</title>
+    <title>メッセージ入力画面</title>
 </head>
 <body>
-    <h1>Hello, World!</h1>
+    <h1>メッセージを入力してください（200文字以内）</h1>
+    <form method="POST" action="/confirm">
+        <textarea name="message" maxlength="200" rows="5" cols="40" required></textarea><br>
+        <input type="submit" value="確認する">
+    </form>
 </body>
 </html>
+
