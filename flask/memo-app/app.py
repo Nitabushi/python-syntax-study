@@ -17,7 +17,7 @@ def complete():
     file_path = "data/output.txt"
     with open(file_path, "w", encoding="utf-8")as file:
         file.write(message)
-    return render_template('complete.html', message=message)
+    return render_template('complete.html', message=message, save_path=file_path)
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8000, debug=True)
