@@ -1,4 +1,4 @@
-file_path = "data/output.txt"
+file_path = "data/output.png"
 ALLOWED_MODES =('w')
 
 # 使用するファイルのモード
@@ -11,9 +11,13 @@ user_input = input("何か入力してください：")
 if not user_input.strip():
     raise ValueError("入力が空です。不正な値です。")
 
-# ファイルのバリデーション
+# ファイル操作のバリデーション
 if mode not in ALLOWED_MODES:
     raise ValueError(f"modeは{ALLOWED_MODES}のいずれかである必要があります。")
+
+# ファイル拡張子のチェック
+if not file_path.endswith(".txt"):
+    raise ValueError("ファイルの拡張子が.txtではありません")
 
 # ファイルに書き込む
 with open(file_path, mode, encoding="utf-8")as file:
