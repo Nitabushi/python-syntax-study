@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>入力内容確認画面</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>以下の内容で保存してよろしいですか？</h1>
+    <p class="message-box">{{ message }}</p>
+    <form method="POST" action="/complete">
+        <input type="hidden" name="message" value="{{ message }}">
+        <button type="submit">保存する</button>
+    </form>
+    <form method="GET" action="/">
+        <button type="submit">修正する</button>
+    </form>
+</body>
+</html>
