@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>メッセージ入力画面</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <h1>メッセージを入力してください（200文字以内）</h1>
@@ -10,6 +11,16 @@
         <textarea name="message" maxlength="200" rows="5" cols="40" required></textarea><br>
         <input type="submit" value="確認する">
     </form>
+    <h2>保存されているメッセージ</h2>
+    {% if messages %}
+        <ul>
+        {% for msg in messages %}
+            <li>{{ msg.content|e }} (ID: {{ msg.id }})</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>まだメッセージはありません。</p>
+    {% endif %}
 </body>
 </html>
 
