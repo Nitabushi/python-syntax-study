@@ -27,7 +27,8 @@ class Message(db.Model):
 # ルーティング
 @app.route('/')
 def index():
-    return render_template('index.html')
+    messages = Message.query.order_by(Message.id.desc()).all()
+    return render_template('index.html', messages=messages)
 
 @app.route('/confirm', methods=['POST'])
 def submit():
