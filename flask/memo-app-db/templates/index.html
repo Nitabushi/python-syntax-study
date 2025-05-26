@@ -15,7 +15,12 @@
     {% if messages %}
         <ul>
         {% for msg in messages %}
-            <li>{{ msg.content|e }} (ID: {{ msg.id }})</li>
+            <li>
+                {{ msg.content|e }} (ID: {{ msg.id }})
+                <form method="POST" action="{{ url_for('delete_message', message_id=msg.id) }}" style="display:inline;">
+                    <button type="submit" onclick="return confirm('本当に削除しますか？');">削除</button>
+                </form>
+            </li>
         {% endfor %}
         </ul>
     {% else %}
