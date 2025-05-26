@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 import os
@@ -46,6 +46,14 @@ def complete():
     print("Saved to DB.")
 
     return render_template('complete.html', message=message)
+
+@app.route('/delete/<int:message_id>', methods=['POST'])
+def delete_message(message_id):
+    message = Message.query.get_or_404(message_id)
+    db.session.delete(message)
+    db.session.commit()
+    print(f"Deleted message with ID: {message_id}")
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     
