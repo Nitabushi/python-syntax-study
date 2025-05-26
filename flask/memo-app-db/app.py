@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+from flask_wtf import CSRFProtect
 from dotenv import load_dotenv
 import os
 
@@ -7,6 +8,7 @@ import os
 load_dotenv()  
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 
 # DB接続設定
 DB_USER = os.getenv('DB_USER')
@@ -18,6 +20,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+pymysql://{DB_USER}:{DB_PASSWORD
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
+csrf = CSRFProtect(app)
 
 # モデルの設定
 class Message(db.Model):
