@@ -12,22 +12,38 @@
         <textarea name="message" maxlength="200" rows="5" cols="40" required></textarea><br>
         <input type="submit" value="確認する">
     </form>
+
     <h2>保存されているメッセージ</h2>
+
     {% if messages %}
-        <ul>
-        {% for msg in messages %}
-            <li>
-                {{ msg.content|e }} (ID: {{ msg.id }}, 投稿日時: {{ msg.created_at_jst.strftime('%Y/%m/%d %H:%M:%S') }})
-                <form method="POST" action="{{ url_for('delete_message', message_id=msg.id) }}" style="display:inline;">
-                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <button type="submit" onclick="return confirm('本当に削除しますか？');">削除</button>
-                </form>
-            </li>
-        {% endfor %}
-        </ul>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>メッセージ</th>
+                <th>投稿日時</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for msg in messages %}
+            <tr>
+                <td>{{ msg.id }}</td>
+                <td>{{ msg.content|e }}</td>
+                <td>{{ msg.created_at_jst.strftime('%Y/%m/%d %H:%M:%S') if msg.created_at_jst else '---' }}</td>
+                <td>
+                    <form method="POST" action="{{ url_for('delete_message', message_id=msg.id) }}" style="display:inline;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" onclick="return confirm('本当に削除しますか？');">削除</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     {% else %}
-        <p>まだメッセージはありません。</p>
+    <p>まだメッセージはありません。</p>
     {% endif %}
+
 </body>
 </html>
-
