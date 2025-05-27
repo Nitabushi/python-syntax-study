@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for
+from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import CSRFProtect
 from dotenv import load_dotenv
@@ -26,6 +27,7 @@ csrf = CSRFProtect(app)
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 # ルーティング
 @app.route('/')
