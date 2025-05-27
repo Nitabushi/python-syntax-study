@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
 import pytz
-from datetime import datetime
+from datetime import datetime, timezone
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import CSRFProtect
 from dotenv import load_dotenv
@@ -28,7 +28,7 @@ csrf = CSRFProtect(app)
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.Text, nullable=False)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
 # ルーティング
 @app.route('/')
@@ -38,7 +38,10 @@ def index():
     # JSTに変換（+9時間）
     jst = pytz.timezone('Asia/Tokyo')
     for msg in messages:
+        if msg.created_at.tzinfo is None:
+            msg.created_at = msg.created_at.replace(tzinfo=timezone.utc)
         msg.created_at_jst = msg.created_at.astimezone(jst)
+    
     return render_template('index.html', messages=messages)
 
 @app.route('/confirm', methods=['POST'])
