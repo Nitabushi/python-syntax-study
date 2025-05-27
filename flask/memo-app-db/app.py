@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for
-from datetime import datetime
+import pytz
+from datetime import timezone, timedelta
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf import CSRFProtect
 from dotenv import load_dotenv
@@ -33,6 +34,11 @@ class Message(db.Model):
 @app.route('/')
 def index():
     messages = Message.query.order_by(Message.id.desc()).all()
+
+    # JSTに変換（+9時間）
+    jst = pytz.timezone('Asia/Tokyo')
+    for msg in messages:
+        msg.created_at_jst = msg.created_at.astimezone(jst)
     return render_template('index.html', messages=messages)
 
 @app.route('/confirm', methods=['POST'])
