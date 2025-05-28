@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+  <head><title>ログイン</title></head>
+  <body>
+    <h1>ログイン画面</h1>
+    <form method="post">
+      <label>ユーザー名: <input type="text" name="username"></label><br>
+      <label>パスワード: <input type="password" name="password"></label><br>
+      <input type="submit" value="ログイン">
+    </form>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul>
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+  </body>
+</html>
