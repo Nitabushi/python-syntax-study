@@ -1,5 +1,6 @@
 from flask import Flask, render_template, redirect, url_for, request, flash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+import re
 
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
@@ -34,6 +35,13 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
+
+        # 半角英数字チェック
+        if not re.match(r'^[a-zA-Z0-9]+$', password):
+            flash('パスワードは半角英数字のみ使用できます')
+            return render_template('login.html')
+        
+        # ユーザ名とパスワード確認
         if username in users and users[username]['password'] == password:
             user = User(username)
             login_user(user)
