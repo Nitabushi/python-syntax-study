@@ -1,8 +1,15 @@
 <!doctype html>
 <html>
-  <head><title>ホーム</title></head>
+  <head>
+    <title>ホーム</title>
+  </head>
   <body>
     <h1>ようこそ {{ name }} さん</h1>
+
+    <p>
+      <a href="{{ url_for('todos') }}">▶ ToDoリストへ</a>
+    </p>
+
     <a href="{{ url_for('logout') }}">ログアウト</a>
   </body>
 </html>

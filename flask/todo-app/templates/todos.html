@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<head>
+    <title>ToDoリスト</title>
+</head>
+<body>
+    <h1>{{ current_user.username }} さんのToDoリスト</h1>
+
+    <form method="POST">
+        <input type="text" name="task" placeholder="新しいタスクを入力">
+        <button type="submit">追加</button>
+    </form>
+
+    <ul>
+        {% for task in tasks %}
+        <li>
+            {% if task.completed %}
+                <s>{{ task.task }}</s>
+            {% else %}
+                {{ task.task }}
+            {% endif %}
+            [<a href="{{ url_for('complete_task', task_id=task.id) }}">完了</a>]
+            [<a href="{{ url_for('delete_task', task_id=task.id) }}">削除</a>]
+        </li>
+        {% endfor %}
+    </ul>
+
+    <a href="{{ url_for('logout') }}">ログアウト</a>
+</body>
+</html>

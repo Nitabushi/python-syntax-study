@@ -36,6 +36,18 @@ class User(UserMixin, db.Model):
     username = db.Column(db.String(150), unique=True, nullable=False)
     password = db.Column(db.String(255), nullable=False)
 
+# ToDoモデル
+class Todo(db.Model):
+    __tablename__ = 'todos'
+
+    id = db.Column(db.Integer, primary_key=True)
+    task = db.Column(db.String(255), nullable=False)
+    completed = db.Column(db.Boolean, default=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+    user = db.relationship('User', backref='todos')
+
+
 # ユーザー読み込みコールバック
 @login_manager.user_loader
 def load_user(user_id):
@@ -72,7 +84,45 @@ def logout():
     logout_user()
     return redirect(url_for('login'))
 
- # 初回だけテーブルを作成する
+@app.route('/todos', methods=['GET', 'POST'])
+@login_required
+def todos():
+    if request.method == 'POST':
+        task_content = request.form['task']
+        if task_content:
+            new_task = Todo(task=task_content, user_id=current_user.id)
+            db.session.add(new_task)
+            db.session.commit()
+            flash('タスクを追加しました')
+        else:
+            flash('タスク内容を入力してください')
+    tasks = Todo.query.filter_by(user_id=current_user.id).all()
+    return render_template('todos.html', tasks=tasks)
+
+@app.route('/complete/<int:task_id>')
+@login_required
+def complete_task(task_id):
+    task = Todo.query.get_or_404(task_id)
+    if task.user_id != current_user.id:
+        flash('他のユーザーのタスクは操作できません')
+        return redirect(url_for('todos'))
+    task.completed = not task.completed
+    db.session.commit()
+    return redirect(url_for('todos'))
+
+@app.route('/delete/<int:task_id>')
+@login_required
+def delete_task(task_id):
+    task = Todo.query.get_or_404(task_id)
+    if task.user_id != current_user.id:
+        flash('他のユーザーのタスクは削除できません')
+        return redirect(url_for('todos'))
+    db.session.delete(task)
+    db.session.commit()
+    return redirect(url_for('todos'))
+
+
+# 初回だけテーブルを作成する
 with app.app_context():
     db.create_all()
 
