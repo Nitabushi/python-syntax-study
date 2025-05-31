@@ -106,8 +106,13 @@ def complete_task(task_id):
     if task.user_id != current_user.id:
         flash('他のユーザーのタスクは操作できません')
         return redirect(url_for('todos'))
+    
     task.completed = not task.completed
     db.session.commit()
+
+    if task.completed:
+        flash('よく頑張りました！')
+
     return redirect(url_for('todos'))
 
 @app.route('/delete/<int:task_id>')
@@ -117,8 +122,10 @@ def delete_task(task_id):
     if task.user_id != current_user.id:
         flash('他のユーザーのタスクは削除できません')
         return redirect(url_for('todos'))
+    
     db.session.delete(task)
     db.session.commit()
+    
     return redirect(url_for('todos'))
 
 
