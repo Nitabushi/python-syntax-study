@@ -5,7 +5,7 @@
 </head>
 <body>
     <h1>{{ current_user.username }} さんのToDoリスト</h1>
-
+    <p>現在のタスク数：{{ tasks|length }} 件</p>
     <form method="POST">
         <input type="text" name="task" placeholder="新しいタスクを入力">
         <button type="submit">追加</button>
