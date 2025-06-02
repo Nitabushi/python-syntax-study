@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 from flask import Flask, render_template, redirect, url_for, request, flash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 import re
+from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -43,8 +44,9 @@ class Todo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     task = db.Column(db.String(255), nullable=False)
     completed = db.Column(db.Boolean, default=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
     user = db.relationship('User', backref='todos')
 
 
@@ -96,7 +98,13 @@ def todos():
             flash('タスクを追加しました')
         else:
             flash('タスク内容を入力してください')
-    tasks = Todo.query.filter_by(user_id=current_user.id).all()
+
+    order = request.args.get('order', 'desc')
+
+    if order == 'asc':
+        tasks = Todo.query.filter_by(user_id=current_user.id).order_by(Todo.created_at.asc()).all()
+    else:
+        tasks = Todo.query.filter_by(user_id=current_user.id).order_by(Todo.created_at.desc()).all()
     return render_template('todos.html', tasks=tasks)
 
 @app.route('/complete/<int:task_id>')

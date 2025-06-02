@@ -6,7 +6,13 @@
 <body>
     <h1>{{ current_user.username }} さんのToDoリスト</h1>
     <p>現在のタスク数：{{ tasks|length }} 件</p>
-    <form method="POST">
+    <p>
+        並び順:
+        <a href="{{ url_for('todos', order='asc') }}">昇順</a> |
+        <a href="{{ url_for('todos', order='desc') }}">降順</a>
+    </p>
+
+    <form method="POST" action="{{ url_for('todos') }}">
         <input type="text" name="task" placeholder="新しいタスクを入力">
         <button type="submit">追加</button>
     </form>
@@ -19,6 +25,7 @@
             {% else %}
                 {{ task.task }}
             {% endif %}
+            - {{ task.created_at.strftime('%Y-%m-%d %H:%M') }}
             [<a href="{{ url_for('complete_task', task_id=task.id) }}">完了</a>]
             [<a href="{{ url_for('delete_task', task_id=task.id) }}">削除</a>]
         </li>
