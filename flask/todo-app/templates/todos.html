@@ -18,37 +18,43 @@
         <button type="submit">追加</button>
     </form>
 
-    <table>
-        <thead>
-            <tr>
-                <th>タスク</th>
-                <th>作成日時</th>
-                <th>状態</th>
-                <th>操作</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for task in tasks %}
-            <tr>
-                <td>
-                    {% if task.completed %}
-                        <s>{{ task.task }}</s>
-                    {% else %}
-                        {{ task.task }}
-                    {% endif %}
-                </td>
-                <td>{{ task.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
-                <td>{{ '完了' if task.completed else '未完了' }}</td>
-                <td class="actions">
-                    <a href="{{ url_for('complete_task', task_id=task.id) }}">
-                        {% if task.completed %}未完了に戻す{% else %}完了{% endif %}
-                    </a>
-                    <a href="{{ url_for('delete_task', task_id=task.id) }}">削除</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <form method="POST" action="{{ url_for('bulk_action') }}">
+        <table>
+            <thead>
+                <tr>
+                    <th><input type="checkbox" id="checkAll"></th>
+                    <th>タスク</th>
+                    <th>作成日時</th>
+                    <th>状態</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for task in tasks %}
+                <tr>
+                    <td><input type="checkbox" name="task_ids" value="{{ task.id }}"></td>
+                    <td>
+                        {% if task.completed %}
+                            <s>{{ task.task }}</s>
+                        {% else %}
+                            {{ task.task }}
+                        {% endif %}
+                    </td>
+                    <td>{{ task.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                    <td>{{ '完了' if task.completed else '未完了' }}</td>
+                    <td class="actions">
+                        <a href="{{ url_for('complete_task', task_id=task.id) }}">
+                            {% if task.completed %}未完了に戻す{% else %}完了{% endif %}
+                        </a>
+                        <a href="{{ url_for('delete_task', task_id=task.id) }}">削除</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit" name="action" value="complete">選択完了/未完了</button>
+        <button type="submit" name="action" value="delete">選択削除</button>
+    </form>
 
     {% with messages = get_flashed_messages() %}
     {% if messages %}
@@ -63,5 +69,13 @@
     {% endwith %}
 
     <p><a href="{{ url_for('logout') }}">ログアウト</a></p>
+
+    <script>
+    document.getElementById('checkAll').addEventListener('change', function() {
+        document.querySelectorAll('input[name="task_ids"]').forEach(cb => {
+            cb.checked = this.checked;
+        });
+    });
+    </script>
 </body>
 </html>
