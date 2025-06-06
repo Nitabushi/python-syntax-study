@@ -7,6 +7,13 @@
 <body>
     <h1>{{ current_user.username }} さんのToDoリスト</h1>
     <p>現在のタスク数：{{ tasks|length }} 件</p>
+    {% if tasks|length <= 3 %}
+        <p style="color: green;">楽勝！</p>
+    {% elif tasks|length <= 10 %}
+        <p style="color: orange;">余裕！</p>
+    {% else %}
+        <p style="color: red;">頑張れ！</p>
+    {% endif %}
     <p>
         並び順:
         <a href="{{ url_for('todos', order='asc') }}">昇順</a> |
