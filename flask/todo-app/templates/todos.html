@@ -6,6 +6,7 @@
 </head>
 <body>
     <h1>{{ current_user.username }} さんのToDoリスト</h1>
+    <p>今日の消化件数：{{ today_completed_count }} 件</p>
     <p>現在のタスク数：{{ tasks|length }} 件</p>
     {% if tasks|length <= 3 %}
         <p style="color: green;">楽勝！</p>

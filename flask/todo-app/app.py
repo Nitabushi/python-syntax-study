@@ -2,7 +2,7 @@ import os
 from dotenv import load_dotenv
 from flask import Flask, render_template, redirect, url_for, request, flash
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-from datetime import datetime
+from datetime import datetime, date
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 import re
@@ -44,10 +44,11 @@ class Todo(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     user = db.relationship('User', backref='todos')
+    completed_at = db.Column(db.DateTime, nullable=True)
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.query.get(int(user_id))
+    return db.session.get(User, int(user_id))
 
 @app.route('/')
 @login_required
@@ -90,11 +91,20 @@ def todos():
             flash('タスク内容を入力してください')
 
     order = request.args.get('order', 'desc')
+
     if order == 'asc':
         tasks = Todo.query.filter_by(user_id=current_user.id).order_by(Todo.created_at.asc()).all()
     else:
         tasks = Todo.query.filter_by(user_id=current_user.id).order_by(Todo.created_at.desc()).all()
-    return render_template('todos.html', tasks=tasks)
+    
+    today = date.today()
+    today_completed_count = Todo.query.filter(
+        Todo.user_id == current_user.id,
+        Todo.completed == True,
+        Todo.completed_at >= datetime(today.year, today.month, today.day)
+    ).count()
+
+    return render_template('todos.html', tasks=tasks, today_completed_count=today_completed_count)
 
 @app.route('/complete/<int:task_id>')
 @login_required
@@ -105,8 +115,12 @@ def complete_task(task_id):
         return redirect(url_for('todos'))
 
     task.completed = not task.completed
+    task.completed_at = datetime.utcnow() if task.completed else None
     db.session.commit()
-    flash('状態を変更しました')
+
+
+    if task.completed:
+        flash('よく頑張りました！')
     return redirect(url_for('todos'))
 
 @app.route('/delete/<int:task_id>')
