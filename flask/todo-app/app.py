@@ -6,6 +6,7 @@ from datetime import datetime, date
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 import re
+from flask_migrate import Migrate
 
 # .envを読み込み
 load_dotenv()
@@ -23,6 +24,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql+mysqlconnector://{DB_USER}:{DB_P
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
 
 # Flask-Login設定
 login_manager = LoginManager()
