@@ -1,6 +1,7 @@
 <!doctype html>
-<html>
+<html lang="ja">
 <head>
+    <meta charset="UTF-8">
     <title>ToDoリスト</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
@@ -15,6 +16,22 @@
     {% else %}
         <p style="color: red;">頑張れ！</p>
     {% endif %}
+
+    <!-- ここに週間消化件数カレンダー表を追加 -->
+    <p>週間のタスク消化件数</p>
+    <table border="1" style="text-align:center; border-collapse: collapse; margin-bottom: 20px;">
+      <tr style="background-color: #f0f0f0;">
+        {% for day in ['月', '火', '水', '木', '金', '土', '日'] %}
+          <th style="padding: 8px;">{{ day }}</th>
+        {% endfor %}
+      </tr>
+      <tr>
+        {% for day in ['月', '火', '水', '木', '金', '土', '日'] %}
+          <td style="padding: 8px;">{{ weekly_completed[day] }}</td>
+        {% endfor %}
+      </tr>
+    </table>
+
     <p>
         並び順:
         <a href="{{ url_for('todos', order='asc') }}">昇順</a> |
@@ -22,12 +39,12 @@
     </p>
 
     <form method="POST" action="{{ url_for('todos') }}">
-        <input type="text" name="task" placeholder="新しいタスクを入力">
+        <input type="text" name="task" placeholder="新しいタスクを入力" required>
         <button type="submit">追加</button>
     </form>
 
     <form method="POST" action="{{ url_for('bulk_action') }}">
-        <table>
+        <table border="1" cellpadding="5" cellspacing="0">
             <thead>
                 <tr>
                     <th><input type="checkbox" id="checkAll"></th>
@@ -53,15 +70,20 @@
                     <td class="actions">
                         <a href="{{ url_for('complete_task', task_id=task.id) }}">
                             {% if task.completed %}未完了に戻す{% else %}完了{% endif %}
-                        </a>
-                        <a href="{{ url_for('delete_task', task_id=task.id) }}">削除</a>
+                        </a> |
+                        <a href="{{ url_for('delete_task', task_id=task.id) }}" onclick="return confirm('本当に削除しますか？');">削除</a>
                     </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5">タスクがありません</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
+
         <button type="submit" name="action" value="complete">選択完了/未完了</button>
-        <button type="submit" name="action" value="delete">選択削除</button>
+        <button type="submit" name="action" value="delete" onclick="return confirm('選択したタスクを削除します。本当によろしいですか？');">選択削除</button>
     </form>
 
     {% with messages = get_flashed_messages() %}
@@ -80,8 +102,9 @@
 
     <script>
     document.getElementById('checkAll').addEventListener('change', function() {
+        const checked = this.checked;
         document.querySelectorAll('input[name="task_ids"]').forEach(cb => {
-            cb.checked = this.checked;
+            cb.checked = checked;
         });
     });
     </script>

@@ -1,7 +1,7 @@
 # 標準ライブラリ
 import os
 import re
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 
 # サードパーティライブラリ
 from dotenv import load_dotenv
@@ -12,7 +12,7 @@ from flask_login import (
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from collections import OrderedDict
 
 # .envを読み込み
 load_dotenv()
@@ -51,17 +51,49 @@ class Todo(db.Model):
     completed = db.Column(db.Boolean, default=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    user = db.relationship('User', backref='todos')
     completed_at = db.Column(db.DateTime, nullable=True)
+    user = db.relationship('User', backref='todos')
 
 @login_manager.user_loader
 def load_user(user_id):
     return db.session.get(User, int(user_id))
 
+def get_weekly_completed_tasks(user_id):
+    """
+    今週（月曜〜日曜）の曜日ごとの完了タスク数を取得し、
+    {'月': 件数, '火': 件数, ..., '日': 件数}のOrderedDictを返す
+    """
+    today = date.today()
+    start_of_week = today - timedelta(days=today.weekday())  # 今週の月曜日
+    end_of_week = start_of_week + timedelta(days=6)         # 今週の日曜日
+
+    # 完了日時でグループ化して件数を取得
+    completed_counts = db.session.query(
+        db.func.date(Todo.completed_at).label('completed_date'),
+        db.func.count().label('count')
+    ).filter(
+        Todo.user_id == user_id,
+        Todo.completed == True,
+        Todo.completed_at >= datetime.combine(start_of_week, datetime.min.time()),
+        Todo.completed_at <= datetime.combine(end_of_week, datetime.max.time())
+    ).group_by(db.func.date(Todo.completed_at)).all()
+
+    # 曜日（日本語）をキーに0で初期化
+    week_dict = OrderedDict((day, 0) for day in ['月', '火', '水', '木', '金', '土', '日'])
+
+    for record in completed_counts:
+        weekday_idx = record.completed_date.weekday()  # 0=月曜
+        day_jp = ['月', '火', '水', '木', '金', '土', '日'][weekday_idx]
+        week_dict[day_jp] = record.count
+
+    return week_dict
+
+
 @app.route('/')
 @login_required
 def home():
     return redirect(url_for('todos'))
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -79,11 +111,13 @@ def login():
             flash('ログイン失敗：ユーザー名かパスワードが間違っています')
     return render_template('login.html')
 
+
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
     return redirect(url_for('login'))
+
 
 @app.route('/todos', methods=['GET', 'POST'])
 @login_required
@@ -112,7 +146,15 @@ def todos():
         Todo.completed_at >= datetime(today.year, today.month, today.day)
     ).count()
 
-    return render_template('todos.html', tasks=tasks, today_completed_count=today_completed_count)
+    weekly_completed = get_weekly_completed_tasks(current_user.id)
+
+    return render_template(
+        'todos.html',
+        tasks=tasks,
+        today_completed_count=today_completed_count,
+        weekly_completed=weekly_completed
+    )
+
 
 @app.route('/complete/<int:task_id>')
 @login_required
@@ -126,10 +168,10 @@ def complete_task(task_id):
     task.completed_at = datetime.utcnow() if task.completed else None
     db.session.commit()
 
-
     if task.completed:
         flash('よく頑張りました！')
     return redirect(url_for('todos'))
+
 
 @app.route('/delete/<int:task_id>')
 @login_required
@@ -143,6 +185,7 @@ def delete_task(task_id):
     db.session.commit()
     flash('タスクを削除しました')
     return redirect(url_for('todos'))
+
 
 @app.route('/bulk_action', methods=['POST'])
 @login_required
@@ -159,6 +202,7 @@ def bulk_action():
         if task and task.user_id == current_user.id:
             if action == 'complete':
                 task.completed = not task.completed
+                task.completed_at = datetime.utcnow() if task.completed else None
             elif action == 'delete':
                 db.session.delete(task)
         else:
@@ -173,9 +217,11 @@ def bulk_action():
 
     return redirect(url_for('todos'))
 
+
 # 初回テーブル作成
 with app.app_context():
     db.create_all()
+
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8002, debug=True)
