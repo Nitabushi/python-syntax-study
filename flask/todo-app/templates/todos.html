@@ -27,7 +27,9 @@
       </tr>
       <tr>
         {% for day in ['月', '火', '水', '木', '金', '土', '日'] %}
-          <td style="padding: 8px;">{{ weekly_completed[day] }}</td>
+          <td class="{% if day in ['土', '日'] %}weekend{% endif %}" style="padding: 8px;">
+            {{ weekly_completed[day] }}
+          </td>
         {% endfor %}
       </tr>
     </table>
