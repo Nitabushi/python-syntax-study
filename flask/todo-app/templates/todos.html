@@ -17,7 +17,6 @@
         <p style="color: red;">頑張れ！</p>
     {% endif %}
 
-    <!-- ここに週間消化件数カレンダー表を追加 -->
     <p>週間のタスク消化件数</p>
     <table border="1" style="text-align:center; border-collapse: collapse; margin-bottom: 20px;">
       <tr style="background-color: #f0f0f0;">
@@ -41,8 +40,8 @@
     </p>
 
     <form method="POST" action="{{ url_for('todos') }}">
-        <input type="text" name="task" placeholder="新しいタスクを入力" required>
-        <button type="submit">追加</button>
+        <input type="text" name="task" placeholder="新しいタスクを入力" required class="task-input">
+        <button type="submit" class="task-submit">追加</button>
     </form>
 
     <form method="POST" action="{{ url_for('bulk_action') }}">

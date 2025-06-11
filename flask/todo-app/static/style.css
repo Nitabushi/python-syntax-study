@@ -36,4 +36,15 @@ s {
 .weekend {
     background-color: rgb(90, 225, 240);
 }
+.task-input {
+    width: 300px;
+    height: 35px;
+    font-size: 16px;
+    padding: 5px;
+}
+.task-submit {
+    height: 39px;
+    font-size: 16px;
+    padding: 5px 15px;
+}
 
