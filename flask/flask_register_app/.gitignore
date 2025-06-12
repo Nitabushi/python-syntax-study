@@ -1,0 +1,33 @@
+# Python関連
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pdb
+*.egg-info/
+*.eggs/
+
+# 仮想環境フォルダ（仮にvenvという名前の場合）
+venv/
+env/
+ENV/
+
+# SQLiteのDBファイル（開発中のファイルが不要なら）
+*.db
+*.sqlite3
+
+# Flaskのログファイルや一時ファイル
+instance/
+*.log
+
+# IDEやエディタの設定ファイル
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Mac特有のファイル
+.DS_Store
+
+# その他
+.env
