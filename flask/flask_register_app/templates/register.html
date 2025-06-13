@@ -10,5 +10,26 @@
     <p>{{ form.password.label }} {{ form.password() }}</p>
     <p>{{ form.submit() }}</p>
   </form>
+  <script>
+    const inputs = document.querySelectorAll("input");
+    const submitBtn = document.getElementById("submit-btn");
+
+    function validateForm() {
+        let allFilled = true;
+        inputs.forEach(input => {
+            if (input.type !== "hidden" && input.value.trim() === "") {
+                allFilled = false;
+            }
+        });
+        submitBtn.disabled = !allFilled;
+    }
+
+    inputs.forEach(input => {
+        input.addEventListener("input", validateForm);
+    });
+
+    // ページ読み込み時にチェック
+    window.addEventListener("DOMContentLoaded", validateForm);
+</script>
 </body>
 </html>

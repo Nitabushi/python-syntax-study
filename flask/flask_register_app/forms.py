@@ -6,4 +6,4 @@ class RegisterForm(FlaskForm):
     username = StringField('ユーザー名', validators=[DataRequired(), Length(min=2, max=20)])
     email = StringField('メールアドレス', validators=[DataRequired(), Email()])
     password = PasswordField('パスワード', validators=[DataRequired(), Length(min=6)])
-    submit = SubmitField('登録')
+    submit = SubmitField("登録", render_kw={"id": "submit-btn"})
