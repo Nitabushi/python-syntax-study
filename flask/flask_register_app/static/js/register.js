@@ -22,11 +22,13 @@ form.addEventListener("submit", function(event) {
   const username = document.getElementById("username").value;
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
+  const formrole = document.getElementById("formrole").value;
 
   const message = `以下の内容で登録してよろしいですか？\n\n` +
                   `ユーザー名: ${username}\n` +
                   `メールアドレス: ${email}\n` +
-                  `パスワード: ${'*'.repeat(password.length)}`;
+                  `パスワード: ${'*'.repeat(password.length)}\n` +
+                  `ユーザ区分:${formrole}`;
 
   if (!confirm(message)) {
     event.preventDefault();
