@@ -24,11 +24,14 @@ form.addEventListener("submit", function(event) {
   const password = document.getElementById("password").value;
   const formrole = document.getElementById("formrole").value;
 
+  const roleDisplay = formrole === "admin" ? "管理者" :
+                      formrole === "user" ? "一般ユーザ" : "不明";
+
   const message = `以下の内容で登録してよろしいですか？\n\n` +
                   `ユーザー名: ${username}\n` +
                   `メールアドレス: ${email}\n` +
                   `パスワード: ${'*'.repeat(password.length)}\n` +
-                  `ユーザ区分:${formrole}`;
+                  `ユーザ区分:${roleDisplay}`;
 
   if (!confirm(message)) {
     event.preventDefault();
