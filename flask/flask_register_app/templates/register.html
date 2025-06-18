@@ -7,9 +7,9 @@
   <h1>会員登録フォーム</h1>
   <form id="register-form" method="POST">
     {{ form.hidden_tag() }}
-    <p>{{ form.username.label }} {{ form.username(id="username") }}</p>
-    <p>{{ form.email.label }} {{ form.email(id="email") }}</p>
-    <p>{{ form.password.label }} {{ form.password(id="password") }}</p>
+    <p>{{ form.username.label }}<span style="color:red;">※必須</span> {{ form.username(id="username") }}</p>
+    <p>{{ form.email.label }}<span style="color:red;">※必須</span> {{ form.email(id="email") }}</p>
+    <p>{{ form.password.label }}<span style="color:red;">※必須</span> {{ form.password(id="password") }}</p>
     <p>{{ form.role.label }} {{ form.role(id="formrole") }}</p>
     <p>{{ form.submit(id="submit-btn") }}</p>
   </form>
